@@ -1,2 +1,6 @@
 # ignore the big a*se csv file
 BUSINESS_NAMES_201803.csv
+*.class
+*~
+*.log
+**/
