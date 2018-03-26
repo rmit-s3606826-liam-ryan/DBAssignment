@@ -38,4 +38,9 @@ public class Business implements Serializable
              + "\n|State of registration: " + BN_STATE_OF_REG
              + "\n|ABN: " + BN_ABN;
     }
+
+    public String getBusinessName()
+    {
+        return BN_NAME.toLowerCase();
+    }
 }
