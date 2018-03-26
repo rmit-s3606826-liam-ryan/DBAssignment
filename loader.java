@@ -61,7 +61,7 @@ public class loader
         return new Business(fields[1], fields[2], fields[3], fields[4], fields[5], fields[6], fields[7], abn_temp);
     }
 
-    public static byte[] serialise(Business bus) throws IOException
+    private  byte[] serialise(Business bus) throws IOException
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
