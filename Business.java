@@ -11,10 +11,10 @@ public class Business implements Serializable
     private final String      BN_RENEW_DT;
     private final String      BN_STATE_NUM;
     private final String      BN_STATE_OF_REG;
-    private final int         BN_ABN;
+    private final Long        BN_ABN;
 
     public Business(String BN_NAME, String BN_STATUS, String BN_REG_DT, String BN_CANCEL_DT,
-                    String BN_RENEW_DT, String BN_STATE_NUM, String BN_STATE_OF_REG, int BN_ABN)
+                    String BN_RENEW_DT, String BN_STATE_NUM, String BN_STATE_OF_REG, Long BN_ABN)
     {
         this.BN_NAME = BN_NAME;
         this.BN_STATUS = BN_STATUS;
