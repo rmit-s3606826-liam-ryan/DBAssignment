@@ -29,14 +29,14 @@ public class Business implements Serializable
     @Override
     public String toString()
     {
-        return "\n|Name: " + BN_NAME 
-             + "\n|Status: " + BN_STATUS
-             + "\n|Registered: " + BN_REG_DT
-             + "\n|Cancelled: " + BN_CANCEL_DT
-             + "\n|Renewed: " + BN_RENEW_DT
-             + "\n|State number: " + BN_STATE_NUM
-             + "\n|State of registration: " + BN_STATE_OF_REG
-             + "\n|ABN: " + BN_ABN;
+        return "\n|Name: [" + BN_NAME + "]"
+             + "\n|Status: [" + BN_STATUS + "]"
+             + "\n|Registered: [" + BN_REG_DT + "]"
+             + "\n|Cancelled: [" + BN_CANCEL_DT + "]"
+             + "\n|Renewed: [" + BN_RENEW_DT + "]"
+             + "\n|State number: [" + BN_STATE_NUM + "]"
+             + "\n|State of registration: [" + BN_STATE_OF_REG + "]"
+             + "\n|ABN: [" + BN_ABN + "]";
     }
 
     public String getBusinessName()

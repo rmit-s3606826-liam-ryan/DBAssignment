@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class querier
 {
@@ -17,10 +19,13 @@ public class querier
     {
         try (FileInputStream pageReader = new FileInputStream("heap." + PAGE_SIZE))
         {
-            while (pageReader.available() >= PAGE_SIZE)
+            int pagenum = 1;
+            while (pageReader.available() != 0)
             {
-                byte[] page = getPage(pageReader);
-                deserialise(page);
+                byte[] fullPage = getPage(pageReader);
+                byte[] trimmedPage = trim(fullPage);
+                deserialise(trimmedPage, pagenum);
+                pagenum++;
             }
         }
         catch (FileNotFoundException e)
@@ -32,32 +37,52 @@ public class querier
             System.err.println("Stream error: " + e.getMessage());
             e.printStackTrace();
         }
-        catch (ClassNotFoundException e)
-        {
-            System.err.println("Object error: " + e.getMessage());
-        }
     }
     
+    private byte[] trim(byte[] fullPage)
+    {
+        int index = fullPage.length - 1;
+        while (index >= 0 && fullPage[index] == 0)
+        {
+            --index;
+        }
+        return Arrays.copyOf(fullPage, index + 1);
+    }
+
     private byte[] getPage(FileInputStream pageReader) throws IOException
     {
         byte[] page = new byte[PAGE_SIZE];
-        pageReader.read(page, 0, PAGE_SIZE);
+        pageReader.read(page);
         return page;
     }
 
-    private void deserialise(byte[] page) throws IOException, ClassNotFoundException
+    private void deserialise(byte[] page, int pn) throws IOException
     {
-        ByteArrayInputStream bais = new ByteArrayInputStream(page);
-        ObjectInputStream ois = new ObjectInputStream(bais);
-        Business bus;
-        while (true)
+        ObjectInputStream ois = null;
+        ByteArrayInputStream bais = null;
+        try 
         {
-            bus = (Business) ois.readObject();
-            if ((bus.getBusinessName().indexOf(QUERY.toLowerCase())) != -1)
+            bais = new ByteArrayInputStream(page);
+            ois = new ObjectInputStream(bais);
+            @SuppressWarnings("unchecked")
+            ArrayList<Business> deserializedPage = (ArrayList<Business>) ois.readObject();
+            for (Business record : deserializedPage)
             {
-                System.out.println(bus.toString());
+                if ((record.getBusinessName().toLowerCase().indexOf(QUERY.toLowerCase())) != -1)
+                {
+                    System.out.println(record.toString() + "|" + pn);
+                }
             }
+            ois.reset();
+        } 
+        catch (Exception e) 
+        {
+//            e.printStackTrace();
+        }
+        finally
+        {
+            if (ois != null) ois.close();
+            bais.close();
         }
     }
-
 }

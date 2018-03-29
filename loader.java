@@ -1,4 +1,6 @@
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class loader
 {
@@ -14,59 +16,76 @@ public class loader
     
     private void run()
     {
-        int bytesInPage = 0;
-        try (BufferedReader br = new BufferedReader(new FileReader(DATA_FILE));
-             FileOutputStream pageWriter = new FileOutputStream("heap." + PAGE_SIZE))
+        try (FileOutputStream fos =   new FileOutputStream("heap." + PAGE_SIZE);
+             BufferedReader    br =   new BufferedReader(
+                                      new FileReader(DATA_FILE)))
         {
-            // grab and discard first row
-            br.readLine();
-            String line = "";
-            int page_num = 1;
+            String line = br.readLine();
+            ArrayList<Business> page = new ArrayList<Business>();
+            int pageSize = 0;
             while ((line = br.readLine()) != null)
             {
-                Business bus = buildRecord(line);
-//                System.out.println(bus.toString());
-                byte[] record = serialise(bus);
-//                System.out.println(record.length + "|" + bytesInPage + "|" + (int)(record.length + bytesInPage));
-                if (bytesInPage + record.length >= PAGE_SIZE)
+                Business record = buildRecord(line);
+                page.add(record);
+                pageSize = getSize(page);
+                if (pageSize >= (.9 * PAGE_SIZE))
                 {
-                    byte[] zero = new byte[PAGE_SIZE - bytesInPage];
-                    pageWriter.write(zero);
-                    bytesInPage = 0;
-                    page_num++;
-                    if (page_num == 10) { break; }
+                    writePage(fos, page, pageSize);
+                    page.clear();
+//                        break;
                 }
-                bytesInPage += record.length;
-                pageWriter.write(record);
             }
+            writePage(fos, page, pageSize);
         }
         catch (FileNotFoundException e)
         {
-            System.err.println("Could not open file: " + e.getMessage());
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
         catch (IOException e)
         {
-            System.err.println("Stream error: " + e.getMessage());
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
     
-    private Business buildRecord(String line)
+    private void writePage(FileOutputStream fos, ArrayList<Business> page, int pageSize) throws IOException
     {
-        String[] fields = line.split("\t", -1);
-        Long abn_temp = null;
-        if (!fields[8].equals(""))
-        {
-            abn_temp = Long.parseLong(fields[8]);
-        }
-        return new Business(fields[1], fields[2], fields[3], fields[4], fields[5], fields[6], fields[7], abn_temp);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        byte[] filler = new byte[PAGE_SIZE - pageSize];
+        oos.writeObject(page);
+        fos.write(filler);
     }
 
-    private  byte[] serialise(Business bus) throws IOException
+    private int getSize(ArrayList<Business> page) throws IOException
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        ObjectOutputStream oos = null;
+        try
+        {
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(page);
+        }
+        catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        oos.close();
+        baos.close();
+        return baos.toByteArray().length;
+    }
+
+    private Business buildRecord(String line) throws IOException
+    {
+        String[] record = line.split("\t", -1);
+        Long abn = null; 
+        if (!record[8].equals(""))
+        {
+            abn = Long.parseLong(record[8]);
+        }
+        Business bus = new Business(record[1], record[2], record[3], record[4], record[5], record[6], record[7], abn);
         
-        oos.writeObject(bus);
-        return baos.toByteArray();
+        return bus;
     }
 }
