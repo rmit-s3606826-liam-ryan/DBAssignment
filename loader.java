@@ -28,8 +28,16 @@ public class loader
                 Business record = buildRecord(line);
                 page.add(record);
                 pageSize = getSize(page);
-                if (pageSize >= (.9 * PAGE_SIZE))
+                if (pageSize >= (.8 * PAGE_SIZE))
                 {
+                    if (pageSize > PAGE_SIZE)
+                    {
+                        page.remove(record);
+                        writePage(fos, page, pageSize);
+                        page.clear();
+                        page.add(record);
+                        continue;
+                    }
                     writePage(fos, page, pageSize);
                     page.clear();
 //                        break;
