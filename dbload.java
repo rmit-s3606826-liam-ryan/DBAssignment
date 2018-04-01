@@ -1,4 +1,7 @@
 
+/**
+ * Driver class for loading data into a heap file
+ */
 public class dbload
 {
     public static void main(String[] args)
@@ -7,6 +10,7 @@ public class dbload
         String data_file = "";
         try
         {
+            // handling command line input
             if (args[0].equals("-p"))
             {
                 page_size = Integer.parseInt(args[1]);
@@ -31,6 +35,7 @@ public class dbload
             System.err.println("Too few arguments: " + e.getMessage());
         }
         
+        // create new loader object using inputs from the command line
         new loader(page_size, data_file);
     }
 }

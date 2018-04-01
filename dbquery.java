@@ -1,4 +1,7 @@
 
+/**
+ * Driver class for running queries on the heap file
+ */
 public class dbquery
 {
     public static void main(String[] args)
@@ -7,6 +10,7 @@ public class dbquery
         String query = "";
         try
         {
+            // handling command line arguments
             if (args[0].equals("-p"))
             {
                 page_size = Integer.parseInt(args[1]);
@@ -31,6 +35,7 @@ public class dbquery
             System.err.println("Too few arguments: " + e.getMessage());
         }
         
+        // create new query class using command line arguments
         new querier(page_size, query);
     }
 }

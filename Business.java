@@ -1,5 +1,8 @@
 import java.io.Serializable;
 
+/**
+ * Class used to hold data taken from BUSINESS_NAME_201803.csv
+ */
 public class Business implements Serializable
 {
     private static final long serialVersionUID = 1477743064500009088L;

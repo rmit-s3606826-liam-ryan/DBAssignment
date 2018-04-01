@@ -2,6 +2,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ *  logic for the queries on the heap file
+ **/
 public class querier
 {
     private final int PAGE_SIZE;
@@ -12,7 +15,11 @@ public class querier
         this.PAGE_SIZE = PAGE_SIZE;
         this.QUERY = QUERY;
         
+        long start_time = System.nanoTime();
         run();
+        long end_time = System.nanoTime();
+        long duration = (end_time - start_time);
+        System.out.println("Duration: " + duration / 1000000000);
     }
     
     private void run()
@@ -20,6 +27,7 @@ public class querier
         try (FileInputStream pageReader = new FileInputStream("heap." + PAGE_SIZE))
         {
             int pagenum = 1;
+            // as long as there is data from the input stream
             while (pageReader.available() != 0)
             {
                 byte[] fullPage = getPage(pageReader);
@@ -35,10 +43,12 @@ public class querier
         catch (IOException e)
         {
             System.err.println("Stream error: " + e.getMessage());
-            e.printStackTrace();
         }
     }
     
+    /**
+     * removes the trailing zero byte array from the page
+     **/
     private byte[] trim(byte[] fullPage)
     {
         int index = fullPage.length - 1;
@@ -49,6 +59,9 @@ public class querier
         return Arrays.copyOf(fullPage, index + 1);
     }
 
+    /**
+     * gets a byte array from the input stream in the required size
+     **/
     private byte[] getPage(FileInputStream pageReader) throws IOException
     {
         byte[] page = new byte[PAGE_SIZE];
@@ -56,6 +69,9 @@ public class querier
         return page;
     }
 
+    /**
+     * turn the byte array back into an ArrayList of Businesses
+     **/
     private void deserialise(byte[] page, int pn) throws IOException
     {
         ObjectInputStream ois = null;
@@ -75,9 +91,10 @@ public class querier
             }
             ois.reset();
         } 
+        // this loop is going to throw an exception everytime it is run, because
+        // that is how the ObjectInputStream tells us its done
         catch (Exception e) 
         {
-//            e.printStackTrace();
         }
         finally
         {
