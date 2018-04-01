@@ -11,7 +11,11 @@ public class loader
     {
         PAGE_SIZE = page_size;
         DATA_FILE = data_file;
+        long start_time = System.nanoTime();
         run();
+        long end_time = System.nanoTime();
+        long duration = (end_time - start_time);
+        System.out.println("Load time: " + duration / 1000000);
     }
     
     private void run()
