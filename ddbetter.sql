@@ -1,5 +1,7 @@
 connect 'jdbc:derby:DerbyDBetter;create=true';
+--because some idiot wanted a business name more than 190char long
 maximumdisplaywidth 25;
+--enable logging and check that it is enabled
 CALL SYSCS_UTIL.SYSCS_SET_DATABASE_PROPERTY('derby.language.logStatementText', 'true');
 VALUES SYSCS_UTIL.SYSCS_GET_DATABASE_PROPERTY('derby.language.logStatementText');
 
@@ -13,10 +15,12 @@ create table Business(id integer, BN_NAME varchar(200), status_id integer refere
                    BN_REG_DT varchar(15), BN_CANCEL_DT varchar(15), BN_RENEW_DT varchar(15),
                    BN_STATE_NUM varchar(15), state_id integer references State(state_id), BN_ABN varchar(15), primary key (id));
 
+-- importing data into tables
 CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE_BULK(null, 'STATE', 'States.csv', '	', null, null, 0, 0);
 CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE_BULK(null, 'STATUS', 'Status.csv', '	', null, null, 0, 0);
 CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE_BULK(null, 'BUSINESS', 'a.csv', '	', null, null, 0, 0);
 
+-- test queries
 select * from Business where upper(BN_NAME) like upper('%warby%');
 select * from Status;
 select * from State;
